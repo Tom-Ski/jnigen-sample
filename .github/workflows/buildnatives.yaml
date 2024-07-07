@@ -12,7 +12,7 @@ jobs:
       matrix:
         os: [ ubuntu-20.04, macos-latest, windows-latest ]
         include:
-          - os: ubuntu-latest
+          - os: ubuntu-20.04
             ANDROID: 'true'
             LINUX: 'true'
             WINDOWS_GNU: 'false'
