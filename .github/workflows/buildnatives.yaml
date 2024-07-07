@@ -13,14 +13,14 @@ jobs:
         os: [ubuntu-latest, macos-latest, windows-latest]
         include:
           - os: ubuntu-latest
-            ANDROID: true
-            LINUX: true
-            WINDOWS_GNU: false
+            ANDROID: 'true'
+            LINUX: 'true'
+            WINDOWS_GNU: 'false'
           - os: macos-latest
-            MAC: true
-            IOS: true
+            MAC: 'true'
+            IOS: 'true'
           - os: windows-latest
-            WINDOWS_MSVC: true
+            WINDOWS_MSVC: 'true'
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
