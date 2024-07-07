@@ -1,6 +1,6 @@
 name: Build Workflow
 
-on: [push, pull_request]
+on: [ push, pull_request ]
 
 env:
   ARTIFACTS_PATH: build/jnigen/libs
@@ -10,7 +10,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
+        os: [ ubuntu-20.04, macos-latest, windows-latest ]
         include:
           - os: ubuntu-latest
             ANDROID: 'true'
@@ -30,6 +30,33 @@ jobs:
           java-version: '11'
       - name: Initialize jnigen
         run: ./gradlew jnigen
+
+      - name: Prep Linux
+        if: matrix.LINUX == 'true'
+        run: |
+          # ubuntu dockerfile is very minimal (only 122 packages are installed)
+          # need to install updated git (from official git ppa)
+          apt update
+          apt install -y software-properties-common
+          add-apt-repository ppa:git-core/ppa -y
+          # install dependencies expected by other steps
+          apt update
+          apt install -y git \
+          curl \
+          ca-certificates \
+          wget \
+          bzip2 \
+          zip \
+          unzip \
+          xz-utils \
+          maven \
+          ant sudo locales
+          
+          # set Locale to en_US.UTF-8 (avoids hang during compilation)
+          locale-gen en_US.UTF-8
+          echo "LANG=en_US.UTF-8" >> $GITHUB_ENV
+          echo "LANGUAGE=en_US.UTF-8" >> $GITHUB_ENV
+          echo "LC_ALL=en_US.UTF-8" >> $GITHUB_ENV
 
       - name: Build for Linux
         if: matrix.LINUX == 'true'
@@ -66,7 +93,7 @@ jobs:
 
   package:
     runs-on: ubuntu-latest
-    needs: [build]
+    needs: [ build ]
     steps:
       - uses: actions/checkout@v2
       - name: Download Artifacts from Linux
