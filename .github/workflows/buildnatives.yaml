@@ -3,20 +3,22 @@ name: Build Workflow
 on: [push, pull_request]
 
 env:
-  ARTIFACTS_PATH: build/jnigen/libs
-
-vars:
   ANDROID: true
   MAC: true
   IOS: true
   WINDOWS_MSVC: true
   WINDOWS_GNU: false
   LINUX: true
-
+  ARTIFACTS_PATH: build/jnigen/libs
+  
 jobs:
   build-linux:
     runs-on: ubuntu-latest
-    if: ${{ vars.LINUX }} || ${{ vars.ANDROID }} || ${{ vars.WINDOWS_GNU }}
+    env:
+      ANDROID: ${{ secrets.ANDROID }}
+      WINDOWS_GNU: ${{ secrets.WINDOWS_GNU }}
+      LINUX: ${{ secrets.LINUX }}
+    if: ${{ env.LINUX == 'true' || env.ANDROID == 'true' || env.WINDOWS_GNU == 'true' }}
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -27,13 +29,13 @@ jobs:
       - name: Initialize jnigen
         run: ./gradlew jnigen
       - name: Build for Linux
-        if: ${{ vars.LINUX }}
+        if: ${{ env.LINUX == 'true' }}
         run: ./gradlew jnigenBuildAllLinux
       - name: Build for Android
-        if: ${{ vars.ANDROID }}
+        if: ${{ env.ANDROID == 'true' }}
         run: ./gradlew jnigenBuildAllAndroid
       - name: Build for Windows (GNU)
-        if: ${{ vars.WINDOWS_GNU }}
+        if: ${{ env.WINDOWS_GNU == 'true' }}
         run: ./gradlew jnigenBuildAllWindows
       - name: Collect Artifacts
         if: always()
@@ -45,7 +47,10 @@ jobs:
 
   build-mac:
     runs-on: macos-latest
-    if: ${{ vars.MAC }} || ${{ vars.IOS }}
+    env:
+      MAC: ${{ secrets.MAC }}
+      IOS: ${{ secrets.IOS }}
+    if: ${{ env.MAC == 'true' || env.IOS == 'true' }}
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -56,10 +61,10 @@ jobs:
       - name: Initialize jnigen
         run: ./gradlew jnigen
       - name: Build for Mac
-        if: ${{ vars.MAC }}
+        if: ${{ env.MAC == 'true' }}
         run: ./gradlew jnigenBuildAllMacOsX
       - name: Build for iOS
-        if: ${{ vars.IOS }}
+        if: ${{ env.IOS == 'true' }}
         run: ./gradlew jnigenBuildAllIOS
       - name: Collect Artifacts
         if: always()
@@ -71,7 +76,9 @@ jobs:
 
   build-windows:
     runs-on: windows-latest
-    if: ${{ vars.WINDOWS_MSVC }}
+    env:
+      WINDOWS_MSVC: ${{ secrets.WINDOWS_MSVC }}
+    if: ${{ env.WINDOWS_MSVC == 'true' }}
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -82,7 +89,7 @@ jobs:
       - name: Initialize jnigen
         run: ./gradlew jnigen
       - name: Build for Windows (MSVC)
-        if: ${{ vars.WINDOWS_MSVC }}
+        if: ${{ env.WINDOWS_MSVC == 'true' }}
         run: ./gradlew jnigenBuildAllWindows
       - name: Collect Artifacts
         if: always()
