@@ -3,18 +3,20 @@ name: Build Workflow
 on: [push, pull_request]
 
 env:
+  ARTIFACTS_PATH: build/jnigen/libs
+
+vars:
   ANDROID: true
   MAC: true
   IOS: true
   WINDOWS_MSVC: true
   WINDOWS_GNU: false
   LINUX: true
-  ARTIFACTS_PATH: build/jnigen/libs
 
 jobs:
   build-linux:
     runs-on: ubuntu-latest
-    if: env.LINUX == 'true' || env.ANDROID == 'true' || env.WINDOWS_GNU == 'true'
+    if: ${{ vars.LINUX }} || ${{ vars.ANDROID }} || ${{ vars.WINDOWS_GNU }}
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -25,13 +27,13 @@ jobs:
       - name: Initialize jnigen
         run: ./gradlew jnigen
       - name: Build for Linux
-        if: env.LINUX == 'true'
+        if: ${{ vars.LINUX }}
         run: ./gradlew jnigenBuildAllLinux
       - name: Build for Android
-        if: env.ANDROID == 'true'
+        if: ${{ vars.ANDROID }}
         run: ./gradlew jnigenBuildAllAndroid
       - name: Build for Windows (GNU)
-        if: env.WINDOWS_GNU == 'true'
+        if: ${{ vars.WINDOWS_GNU }}
         run: ./gradlew jnigenBuildAllWindows
       - name: Collect Artifacts
         if: always()
@@ -43,7 +45,7 @@ jobs:
 
   build-mac:
     runs-on: macos-latest
-    if: env.MAC == 'true' || env.IOS == 'true'
+    if: ${{ vars.MAC }} || ${{ vars.IOS }}
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -54,10 +56,10 @@ jobs:
       - name: Initialize jnigen
         run: ./gradlew jnigen
       - name: Build for Mac
-        if: env.MAC == 'true'
+        if: ${{ vars.MAC }}
         run: ./gradlew jnigenBuildAllMacOsX
       - name: Build for iOS
-        if: env.IOS == 'true'
+        if: ${{ vars.IOS }}
         run: ./gradlew jnigenBuildAllIOS
       - name: Collect Artifacts
         if: always()
@@ -69,7 +71,7 @@ jobs:
 
   build-windows:
     runs-on: windows-latest
-    if: env.WINDOWS_MSVC == 'true'
+    if: ${{ vars.WINDOWS_MSVC }}
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -80,7 +82,7 @@ jobs:
       - name: Initialize jnigen
         run: ./gradlew jnigen
       - name: Build for Windows (MSVC)
-        if: env.WINDOWS_MSVC == 'true'
+        if: ${{ vars.WINDOWS_MSVC }}
         run: ./gradlew jnigenBuildAllWindows
       - name: Collect Artifacts
         if: always()
