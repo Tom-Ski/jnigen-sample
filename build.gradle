@@ -1,8 +1,20 @@
+buildscript {
+    repositories {
+        maven {
+            url = "https://oss.sonatype.org/content/repositories/snapshots/"
+        }
+    }
+    dependencies {
+        classpath "com.badlogicgames.gdx:gdx-jnigen-gradle:3.0.0-ANTKILLER-SNAPSHOT"
+    }
+}
+
 plugins {
     id 'java'
-    id 'com.badlogicgames.gdx.gdx-jnigen'
     id 'maven-publish'
 }
+
+apply plugin: "com.badlogicgames.gdx.gdx-jnigen"
 
 
 repositories {
@@ -14,9 +26,6 @@ dependencies {
     testImplementation platform('org.junit:junit-bom:5.10.0')
     testImplementation 'org.junit.jupiter:junit-jupiter'
 
-    testImplementation "com.badlogicgames.gdx:gdx-jnigen-loader"
-
-    testImplementation("com.asidik.test:test-platform:0.0.1-SNAPSHOT:natives-desktop")
 
 }
 
@@ -33,22 +42,24 @@ jnigen {
         cppFlags += " -std=c++11 -fexceptions "
     }
 
-//    add(Linux, x32, x86)
-//    add(Linux, x32, ARM)
-//    add(Linux, x64, x86)
-//    add(Linux, x64, ARM)
-//    add(Linux, x64, RISCV)
-//    add(Linux, x64, LOONGARCH)
-//    add(MacOsX, x64, x86)
-//    add(MacOsX, x64, ARM)
+    add(Linux, x32, x86)
+    add(Linux, x32, ARM)
+    add(Linux, x64, x86)
+    add(Linux, x64, ARM)
+    add(Linux, x64, RISCV)
+    add(Linux, x64, LOONGARCH)
+    add(MacOsX, x64, x86)
+    add(MacOsX, x64, ARM)
+
     add(Windows, x32, x86, MSVC)
     add(Windows, x64, x86, MSVC)
     add(Windows, x32, ARM, MSVC)
     add(Windows, x64, ARM, MSVC)
-//    add(Android) {
-//        linkerFlags += " -stdlib=libc++\nAPP_STL := c++_shared "
-//    }
-//    add(IOS)
+
+    add(Android) {
+        linkerFlags += " -stdlib=libc++\nAPP_STL := c++_shared "
+    }
+    add(IOS)
 }
 
 
