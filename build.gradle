@@ -9,6 +9,7 @@ buildscript {
     }
 }
 
+
 plugins {
     id 'java'
     id 'maven-publish'
@@ -20,6 +21,9 @@ apply plugin: "com.badlogicgames.gdx.gdx-jnigen"
 repositories {
     mavenCentral()
     mavenLocal()
+    maven {
+        url = "https://oss.sonatype.org/content/repositories/snapshots/"
+    }
 }
 
 dependencies {
@@ -27,6 +31,7 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter'
 
 
+    testImplementation "com.badlogicgames.gdx:gdx-jnigen-loader:3.0.0-ANTKILLER-SNAPSHOT"
 }
 
 test {
