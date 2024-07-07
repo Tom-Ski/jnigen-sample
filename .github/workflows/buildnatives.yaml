@@ -1,0 +1,117 @@
+name: Build Workflow
+
+on: [push, pull_request]
+
+env:
+  ANDROID: true
+  MAC: true
+  IOS: true
+  WINDOWS_MSVC: true
+  WINDOWS_GNU: false
+  LINUX: true
+  ARTIFACTS_PATH: build/jnigen/libs
+
+jobs:
+  build-linux:
+    runs-on: ubuntu-latest
+    if: env.LINUX == 'true' || env.ANDROID == 'true' || env.WINDOWS_GNU == 'true'
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt'
+          java-version: '11'
+      - name: Initialize jnigen
+        run: ./gradlew jnigen
+      - name: Build for Linux
+        if: env.LINUX == 'true'
+        run: ./gradlew jnigenBuildAllLinux
+      - name: Build for Android
+        if: env.ANDROID == 'true'
+        run: ./gradlew jnigenBuildAllAndroid
+      - name: Build for Windows (GNU)
+        if: env.WINDOWS_GNU == 'true'
+        run: ./gradlew jnigenBuildAllWindows
+      - name: Collect Artifacts
+        if: always()
+        run: mkdir -p artifacts && cp -r ${{ env.ARTIFACTS_PATH }}/* artifacts/
+      - uses: actions/upload-artifact@v2
+        with:
+          name: linux-artifacts
+          path: artifacts/
+
+  build-mac:
+    runs-on: macos-latest
+    if: env.MAC == 'true' || env.IOS == 'true'
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt'
+          java-version: '11'
+      - name: Initialize jnigen
+        run: ./gradlew jnigen
+      - name: Build for Mac
+        if: env.MAC == 'true'
+        run: ./gradlew jnigenBuildAllMacOsX
+      - name: Build for iOS
+        if: env.IOS == 'true'
+        run: ./gradlew jnigenBuildAllIOS
+      - name: Collect Artifacts
+        if: always()
+        run: mkdir -p artifacts && cp -r ${{ env.ARTIFACTS_PATH }}/* artifacts/
+      - uses: actions/upload-artifact@v2
+        with:
+          name: mac-artifacts
+          path: artifacts/
+
+  build-windows:
+    runs-on: windows-latest
+    if: env.WINDOWS_MSVC == 'true'
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt'
+          java-version: '11'
+      - name: Initialize jnigen
+        run: ./gradlew jnigen
+      - name: Build for Windows (MSVC)
+        if: env.WINDOWS_MSVC == 'true'
+        run: ./gradlew jnigenBuildAllWindows
+      - name: Collect Artifacts
+        if: always()
+        run: mkdir -p artifacts && cp -r ${{ env.ARTIFACTS_PATH }}/* artifacts/
+      - uses: actions/upload-artifact@v2
+        with:
+          name: windows-artifacts
+          path: artifacts/
+
+  package:
+    runs-on: ubuntu-latest
+    needs: [build-linux, build-mac, build-windows]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Download Artifacts from Linux
+        if: success() && needs.build-linux.result == 'success'
+        uses: actions/download-artifact@v2
+        with:
+          name: linux-artifacts
+          path: artifacts/linux
+      - name: Download Artifacts from Mac
+        if: success() && needs.build-mac.result == 'success'
+        uses: actions/download-artifact@v2
+        with:
+          name: mac-artifacts
+          path: artifacts/mac
+      - name: Download Artifacts from Windows
+        if: success() && needs.build-windows.result == 'success'
+        uses: actions/download-artifact@v2
+        with:
+          name: windows-artifacts
+          path: artifacts/windows
+      - name: Package All
+        run: ./gradlew jnigenPackageAll
