@@ -45,6 +45,9 @@ jobs:
           sudo apt install -y --force-yes gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf libc6-dev-armhf-cross
           sudo apt install -y --force-yes mingw-w64 lib32z1
           sudo apt install -y --force-yes gcc-multilib
+          
+          sudo dpkg --add-architecture i386
+          sudo apt install -y --force-yes libstdc++6:i386
 
       - uses: actions/checkout@v2
         with:
@@ -59,7 +62,7 @@ jobs:
 
       - name: Initialize jnigen
         run: ./gradlew jnigen
-      - name: Build natives 
+      - name: Build natives
         run: ./gradlew jnigenBuildAllLinux jnigenBuildAllAndroid --info
   build-mac:
     runs-on: macos-latest
@@ -87,7 +90,7 @@ jobs:
 
       - name: Initialize jnigen
         run: ./gradlew jnigen
-      - name: Build natives 
+      - name: Build natives
         run: ./gradlew jnigenBuildAllIOS jnigenBuildAllMacOsX --info
   build-windows:
     runs-on: windows-latest
@@ -105,7 +108,7 @@ jobs:
 
       - name: Initialize jnigen
         run: ./gradlew jnigen
-      - name: Build natives 
+      - name: Build natives
         run: ./gradlew jnigenBuildAllWindows --info
 
 
