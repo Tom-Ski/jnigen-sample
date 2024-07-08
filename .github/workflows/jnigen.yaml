@@ -39,12 +39,10 @@ jobs:
 
       - name: Install cross-compilation toolchains
         run: |
-          sudo dpkg --add-architecture i386; sudo dpkg --add-architecture armhf; sudo dpkg --add-architecture arm64
           sudo apt update
-          sudo apt install -y --force-yes gcc g++ gcc-multilib g++-multilib
+          sudo apt install -y --force-yes gcc g++
           sudo apt install -y --force-yes gcc-aarch64-linux-gnu g++-aarch64-linux-gnu libc6-dev-arm64-cross
           sudo apt install -y --force-yes gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf libc6-dev-armhf-cross
-          sudo apt install -y --force-yes mingw-w64 lib32z1
 
       - name: Verify installation
         run: |
