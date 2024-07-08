@@ -45,7 +45,7 @@ jobs:
           sudo apt install -y --force-yes gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf libc6-dev-armhf-cross
           sudo apt install -y --force-yes mingw-w64 lib32z1
           sudo apt install -y --force-yes gcc-multilib
-          sudo apt install -y --force-yes libstdc++6-i386-cross
+          sudo apt install -y --force-yes libstdc++6
           
 
 
