@@ -45,9 +45,9 @@ jobs:
           sudo apt install -y --force-yes gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf libc6-dev-armhf-cross
           sudo apt install -y --force-yes mingw-w64 lib32z1
           sudo apt install -y --force-yes gcc-multilib
-          sudo apt install -y --force-yes libstdc++6
+          sudo dpkg --add-architecture i386
+          sudo apt-get install libc6:i386 libstdc++6:i386
           
-
 
       - uses: actions/checkout@v2
         with:
