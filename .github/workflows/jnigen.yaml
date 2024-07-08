@@ -47,8 +47,12 @@ jobs:
           sudo apt install -y --force-yes gcc-multilib
           sudo dpkg --add-architecture i386
           sudo apt-get update
-          sudo apt-get install -y --force-yes libc6:i386 libstdc++6:i386
-          
+          sudo apt-get install -y --force-yes gcc g++ libc6:i386 libstdc++6:i386
+
+      - name: Verify installation
+        run: |
+          dpkg -l | grep libc6
+          dpkg -l | grep libstdc++
 
       - uses: actions/checkout@v2
         with:
