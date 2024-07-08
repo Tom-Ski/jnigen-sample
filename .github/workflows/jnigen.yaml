@@ -51,6 +51,8 @@ jobs:
           unzip android-ndk.zip
           echo "NDK_HOME=$(pwd)/android-ndk-r25c" >> $GITHUB_ENV
 
+      - name: List NDK_HOME directory
+        run: ls -l $NDK_HOME
 
       - uses: actions/checkout@v2
         with:
