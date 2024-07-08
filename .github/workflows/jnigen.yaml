@@ -34,11 +34,6 @@ jobs:
           echo "LANGUAGE=en_US.UTF-8" >> $GITHUB_ENV
           echo "LC_ALL=en_US.UTF-8" >> $GITHUB_ENV
 
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-          submodules: 'recursive'
-          
       - name: Install cross-compilation toolchains
         run: |
           sudo apt update
@@ -47,7 +42,9 @@ jobs:
           sudo apt install -y --force-yes gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf libc6-dev-armhf-cross
           sudo apt install -y --force-yes mingw-w64 lib32z1
 
-
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up JDK 17
         uses: actions/setup-java@v3
