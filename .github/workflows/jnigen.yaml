@@ -44,7 +44,6 @@ jobs:
           sudo apt install -y --force-yes gcc-aarch64-linux-gnu g++-aarch64-linux-gnu libc6-dev-arm64-cross
           sudo apt install -y --force-yes gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf libc6-dev-armhf-cross
 
-
       - name: Download Android NDK
         run: |
           mkdir -p $HOME/android-ndk
@@ -54,28 +53,34 @@ jobs:
           unzip android-ndk.zip
           echo "NDK_HOME=$HOME/android-ndk/android-ndk-r25c" >> $GITHUB_ENV
 
-      - name: List NDK_HOME directory
-        run: ls -l $NDK_HOME
-
       - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v2
         with:
-          fetch-depth: 0
-
-      - name: Set up JDK 17
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'zulu'
-          java-version: '17'
+          distribution: 'adopt'
+          java-version: '11'
 
 
       - name: Initialize jnigen
         run: ./gradlew jnigen
-      - name: Build natives
-        run: ./gradlew jnigenBuildAllLinux jnigenBuildAllAndroid --info
+      - name: Build natives 
+        run: ./gradlew jnigenBuildAllLinux jnigenBuildAllAndroid
+
+
+      - name: Pack artifacts
+        run: |
+          find .  -name "*.a" -o -name "*.dll" -o -name "*.dylib" -o -name "*.so" | grep "libs" > native-files-list
+          zip natives-linux -@ < native-files-list
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: natives-linux.zip
+          path: natives-linux.zip
   build-mac:
     runs-on: macos-latest
     steps:
-      - name: Build macOS natives
+      - name: Setup Xcode SDK
         run: |
           # See https://github.com/actions/virtual-environments/issues/2557
           sudo mv /Library/Developer/CommandLineTools/SDKs/* /tmp
@@ -85,44 +90,61 @@ jobs:
           /usr/bin/xcodebuild -version
 
       - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v2
         with:
-          fetch-depth: 0
-          submodules: 'recursive'
-
-      - name: Set up JDK 17
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'zulu'
-          java-version: '17'
+          distribution: 'adopt'
+          java-version: '11'
 
 
       - name: Initialize jnigen
         run: ./gradlew jnigen
-      - name: Build natives
-        run: ./gradlew jnigenBuildAllIOS jnigenBuildAllMacOsX --info
+      - name: Build natives 
+        run: ./gradlew jnigenBuildAllMacOsX jnigenBuildAllIOS
+
+      - name: Pack artifacts
+        run: |
+          find .  -name "*.a" -o -name "*.dll" -o -name "*.dylib" -o -name "*.so" | grep "libs" > native-files-list
+          zip natives-mac -@ < native-files-list
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: natives-mac.zip
+          path: natives-mac.zip
   build-windows:
     runs-on: windows-latest
     steps:
-      - name: Add to PATH
+      - name: Add VCVarsall To path
         shell: pwsh
         run: |
           echo "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
 
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-          submodules: 'recursive'
 
-      - name: Set up JDK 17
-        uses: actions/setup-java@v3
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v2
         with:
-          distribution: 'zulu'
-          java-version: '17'
+          distribution: 'adopt'
+          java-version: '11'
+
 
       - name: Initialize jnigen
         run: ./gradlew jnigen
-      - name: Build natives
-        run: ./gradlew jnigenBuildAllWindows --info
+      - name: Build natives 
+        run: ./gradlew jnigenBuildAllWindows
+
+
+      - name: Pack artifacts
+        run: |
+          find .  -name "*.a" -o -name "*.dll" -o -name "*.dylib" -o -name "*.so" | grep "libs" > native-files-list
+          zip natives-windows -@ < native-files-list
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: natives-windows.zip
+          path: natives-windows.zip
 
 
   package:
@@ -135,20 +157,20 @@ jobs:
         if: success() && needs.build-linux.result == 'success'
         uses: actions/download-artifact@v2
         with:
-          name: linux-artifacts
-          path: artifacts/linux
+          name: natives-linux.zip
+
       - name: Download Artifacts from mac
         if: success() && needs.build-mac.result == 'success'
         uses: actions/download-artifact@v2
         with:
-          name: mac-artifacts
-          path: artifacts/mac
+          name: natives-mac.zip
+
       - name: Download Artifacts from windows
         if: success() && needs.build-windows.result == 'success'
         uses: actions/download-artifact@v2
         with:
-          name: windows-artifacts
-          path: artifacts/windows
+          name: natives-windows.zip
+
 
 
       - name: Package All
