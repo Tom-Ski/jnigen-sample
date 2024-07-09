@@ -64,7 +64,7 @@ jobs:
       - name: Initialize jnigen
         run: ./gradlew jnigen
       - name: Build natives 
-        run: ./gradlew jnigenBuildAllLinux jnigenBuildAllAndroid
+        run: ./gradlew jnigenBuildAllAndroid jnigenBuildAllLinux
 
 
       - name: Pack artifacts
@@ -134,11 +134,14 @@ jobs:
       - name: Build natives 
         run: ./gradlew jnigenBuildAllWindows
 
+      - name: Choco install Zip
+        run: choco install zip
 
       - name: Pack artifacts
+        shell: bash
         run: |
-          Get-ChildItem -Path . -Include *.a, *.dll, *.dylib, *.so -Recurse | Where-Object { $_.FullName -like "*libs*" } | Select-Object -ExpandProperty FullName | Out-File -FilePath native-files-list.txt -Encoding utf8
-          Compress-Archive -Path (Get-Content native-files-list.txt) -DestinationPath natives-windows.zip
+          find .  -name "*.a" -o -name "*.dll" -o -name "*.dylib" -o -name "*.so" | grep "libs" > native-files-list
+          zip natives-windows -@ < native-files-list
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
@@ -159,12 +162,16 @@ jobs:
         with:
           name: natives-linux.zip
 
+      - name: Unzip artifacts
+        run: unzip -o natives-linux.zip
       - name: Download Artifacts from mac
         if: success() && needs.build-mac.result == 'success'
         uses: actions/download-artifact@v2
         with:
           name: natives-mac.zip
 
+      - name: Unzip artifacts
+        run: unzip -o natives-mac.zip
       - name: Download Artifacts from windows
         if: success() && needs.build-windows.result == 'success'
         uses: actions/download-artifact@v2
@@ -172,11 +179,8 @@ jobs:
           name: natives-windows.zip
 
       - name: Unzip artifacts
-        run: unzip -o natives-linux.zip
-      - name: Unzip artifacts
-        run: unzip -o natives-mac.zip
-      - name: Unzip artifacts
         run: unzip -o natives-windows.zip
 
+
       - name: Package All
-        run: ./gradlew jnigenPackageAll
+        run: ./gradlew jnigenPackageAll --info --stacktrace
