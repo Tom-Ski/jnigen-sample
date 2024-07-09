@@ -109,7 +109,7 @@ jobs:
       - name: Verify vcvarsall.bat Presence
         shell: cmd
         run: |
-          dir "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build"
+          vcvarsall.bat 
 
       - uses: actions/checkout@v2
         with:
