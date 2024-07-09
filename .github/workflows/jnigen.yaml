@@ -43,6 +43,8 @@ jobs:
           sudo apt install -y --force-yes gcc g++
           sudo apt install -y --force-yes gcc-aarch64-linux-gnu g++-aarch64-linux-gnu libc6-dev-arm64-cross
           sudo apt install -y --force-yes gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf libc6-dev-armhf-cross
+          sudo apt install -y --force-yes gcc-riscv64-linux-gnu g++-riscv64-linux-gnu libc6-dev-riscv64-cross
+          sudo apt install -y --force-yes mingw-w64 lib32z1
 
       - name: Download Android NDK
         run: |
@@ -64,7 +66,7 @@ jobs:
       - name: Initialize jnigen
         run: ./gradlew jnigen
       - name: Build natives 
-        run: ./gradlew jnigenBuildAllLinux jnigenBuildAllAndroid jnigenBuildAllWindows
+        run: ./gradlew jnigenBuildAllAndroid jnigenBuildAllLinux jnigenBuildAllWindows
 
 
       - name: Pack artifacts
@@ -100,7 +102,7 @@ jobs:
       - name: Initialize jnigen
         run: ./gradlew jnigen
       - name: Build natives 
-        run: ./gradlew jnigenBuildAllMacOsX jnigenBuildAllIOS
+        run: ./gradlew jnigenBuildAllIOS jnigenBuildAllMacOsX
 
       - name: Pack artifacts
         run: |
@@ -139,4 +141,4 @@ jobs:
 
 
       - name: Package All
-        run: ./gradlew jnigenPackageAll --info --stacktrace
+        run: ./gradlew jnigenPackageAll
