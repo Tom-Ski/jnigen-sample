@@ -136,6 +136,7 @@ jobs:
 
 
       - name: Pack artifacts
+        shell: bash
         run: |
           find .  -name "*.a" -o -name "*.dll" -o -name "*.dylib" -o -name "*.so" | grep "libs" > native-files-list
           zip natives-windows -@ < native-files-list
