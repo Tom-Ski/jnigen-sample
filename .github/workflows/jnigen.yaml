@@ -64,7 +64,7 @@ jobs:
       - name: Initialize jnigen
         run: ./gradlew jnigen
       - name: Build natives 
-        run: ./gradlew jnigenBuildAllAndroid jnigenBuildAllLinux
+        run: ./gradlew jnigenBuildAllLinux jnigenBuildAllAndroid
 
 
       - name: Pack artifacts
@@ -104,7 +104,7 @@ jobs:
 
       - name: Pack artifacts
         run: |
-          find .  -name "*.a" -o -name "*.dll" -o -name "*.dylib" -o -name "*.so" | grep "libs" > native-files-list
+          find .  -name "*.a" -o -name "*.dll" -o -name "*.dylib" -o -name "*.so" -o -name "*.xcframework" | grep "libs" > native-files-list
           zip natives-mac -@ < native-files-list
 
       - name: Upload artifacts
