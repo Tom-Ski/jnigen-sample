@@ -68,7 +68,7 @@ jobs:
       - name: Initialize jnigen
         run: ./gradlew jnigen
       - name: Build natives
-        run: ./gradlew jnigenBuildAllLinux jnigenBuildAllAndroid --info
+        run: sudo ./gradlew jnigenBuildAllLinux jnigenBuildAllAndroid --info
   build-mac:
     runs-on: macos-latest
     steps:
