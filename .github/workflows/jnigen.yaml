@@ -103,9 +103,9 @@ jobs:
   build-windows:
     runs-on: windows-latest
     steps:
-      - name: Set up Visual Studio Environment Variable
-        run: echo "VCVARSALL_PATH=C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build" >> $GITHUB_ENV
-
+      - name: Add Visual Studio to PATH
+        run: echo "PATH=C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build;%PATH%" >> $GITHUB_ENV
+      
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
