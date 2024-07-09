@@ -105,7 +105,11 @@ jobs:
     steps:
       - name: Add Visual Studio to PATH
         run: echo "PATH=C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build;%PATH%" >> $GITHUB_ENV
-      
+      - name: Verify vcvarsall.bat Presence
+        shell: cmd
+        run: |
+          dir "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build"
+
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
