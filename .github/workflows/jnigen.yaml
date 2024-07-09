@@ -171,7 +171,12 @@ jobs:
         with:
           name: natives-windows.zip
 
-
+      - name: Unzip artifacts
+        run: unzip -o natives-linux.zip
+      - name: Unzip artifacts
+        run: unzip -o natives-mac.zip
+      - name: Unzip artifacts
+        run: unzip -o natives-windows.zip
 
       - name: Package All
         run: ./gradlew jnigenPackageAll
