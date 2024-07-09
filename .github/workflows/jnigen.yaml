@@ -106,10 +106,12 @@ jobs:
       - name: Add Visual Studio to PATH
         run: echo "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build" >> $GITHUB_PATH
 
-      - name: Verify vcvarsall.bat Presence
+      - name: Set up Visual Studio
         shell: cmd
         run: |
-          vcvarsall.bat 
+          echo "Current PATH: %PATH%"
+          vcvarsall.bat x64
+          cl.exe /?
 
       - uses: actions/checkout@v2
         with:
