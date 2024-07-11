@@ -32,8 +32,8 @@ dependencies {
     testImplementation platform('org.junit:junit-bom:5.10.0')
     testImplementation 'org.junit.jupiter:junit-jupiter'
 
-
     testImplementation "com.badlogicgames.gdx:gdx-jnigen-loader:3.0.0-ANTKILLER-SNAPSHOT"
+    testImplementation fileTree(dir: "build/jnigen/libs/", include: "*.jar")
 }
 
 test {
@@ -43,18 +43,27 @@ test {
 jnigen {
     sharedLibName = "test"
 
+
     all {
         cFlags += " -std=c11 -fexceptions "
         cppFlags += " -std=c++11 -fexceptions "
+
+        headerDirs = ["nativesample"]
+
+        cIncludes = ["nativesample/**/*.c"]
+        cExcludes = ["nativesample/exclude/*"]
+
+        cppIncludes = ["nativesample/**/*.cpp"]
+        cppExcludes = ["nativesample/exclude/*"]
     }
 
-    addLinux(x32, ARM)
-    addLinux(x64, ARM)
-    addLinux(x64, x86)
-    addLinux(x64, RISCV)
-
-    addMac(x64, x86)
-    addMac(x64, ARM)
+//    addLinux(x32, ARM)
+//    addLinux(x64, ARM)
+//    addLinux(x64, x86)
+//    addLinux(x64, RISCV)
+//
+//    addMac(x64, x86)
+//    addMac(x64, ARM)
 
 //    addWindows(x32, x86, MSVC)
 //    addWindows(x64, x86, MSVC)
@@ -65,7 +74,7 @@ jnigen {
     addAndroid() {
         linkerFlags += " -stdlib=libc++\nAPP_STL := c++_shared "
     }
-    addIOS()
+//    addIOS()
 }
 
 

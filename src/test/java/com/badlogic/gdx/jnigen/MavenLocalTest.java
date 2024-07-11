@@ -17,6 +17,11 @@ public class MavenLocalTest {
     }
 
     @Test
+    public void testNativeExternalHello () {
+        assertTrue(JniGenTestClass.nativeHello());
+    }
+
+    @Test
     public void testBoolean () {
         assertTrue(JniGenTestClass.testBoolean(true));
         assertFalse(JniGenTestClass.testBoolean(false));

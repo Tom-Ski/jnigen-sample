@@ -4,6 +4,18 @@ import java.nio.Buffer;
 
 class JniGenTestClass {
 
+    // @off
+	/*JNI
+
+	    extern "C" {
+    	    #include "nativecode.h"
+	    }
+	 */
+
+    public static native boolean nativeHello ();/*
+        return nativeHello();
+    */
+
     public static native boolean testBoolean(boolean boolArg); /*
 		return boolArg;
 	*/
